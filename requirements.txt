@@ -1,3 +1,7 @@
 shutils
 pandas
 ftputil
+paypalhttp
+Jinja2
+Werkzeug
+paypal

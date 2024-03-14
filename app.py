@@ -15,9 +15,9 @@ def is_code_allowed(input_code):
 
     if input_code in allowed_codes:
         is_allowed = True
-        codes_df = codes_df[codes_df['Code'] != input_code]
-        codes_df.to_pickle(df_pkl)
-        print(f'Codes updated removing {input_code}, n codes left: {len(codes_df)}')
+        #codes_df = codes_df[codes_df['Code'] != input_code]
+        #codes_df.to_pickle(df_pkl)
+        #print(f'Codes updated removing {input_code}, n codes left: {len(codes_df)}')
     else:
         is_allowed = False
 
@@ -31,10 +31,12 @@ def generate_download_link(input_code):
 
     download_link = utils.generate_download_link()
 
+    #st.markdown(f'<a href={download_link}>DOWNLOAD LINK</a>')
     return f'[DOWNLOAD LINK]({download_link})'
 
 # Streamlit app layout
 st.title("XX Years Of Steel")
+st.text("")
 
 # User input for code
 input_code = st.text_input("Redeem your code:")

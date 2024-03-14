@@ -5,6 +5,9 @@ import re
 import pickle as pkl
 import shutil
 import os
+import ftplib
+import ftputil
+
 
 def generate_random_string(length):
     """
@@ -25,18 +28,65 @@ def generate_random_string(length):
     return random_string
 
 
+def get_files_directories(session):
+
+    dirlisting = []
+    
+    session.retrlines('LIST',callback=dirlisting.append)
+    
+    files = []
+    directories = []
+    
+    for l in dirlisting:
+        lastspace = l.rindex(' ')
+        file_name = l[lastspace+1:]
+        if l[0] == 'd':
+            directories.append(file_name)
+        elif l[0] == '-':
+            files.append(file_name)
+            
+    return files,directories
+    
+
+def copy_file_ftp(base_path, tmp_path, old_link, new_link):
+
+    usr = os.getenv('ARUBA_USR')
+    pwd = os.getenv('ARUBA_PWD')
+    #session = ftplib.FTP('ftp.nanowar.it', usr, pwd)
+    session = ftputil.FTPHost('ftp.nanowar.it', usr, pwd)
+    print(session.listdir(session.curdir))
+    session.chdir(base_path)
+    session.mkdir(tmp_path)
+
+    with session.open(old_link, "rb") as source:
+        with session.open(new_link, "wb") as target:
+            session.copyfileobj(source, target)
+    #files, dirs = get_files_directories(session)
+    #print(files, dirs)
+        
+    #with session.transfercmd(f'RETR {old_link}') as source_file:
+    #    print(old_link, new_link)
+    #source_file = open('short.wav', 'rb')
+    #session.storbinary(f'STOR {new_link}', source_file)
+
+    #session.retrbinary(f'RETR {f}')
+
+    #print(f'FILE {old_link} copied to {new_link}')
+
 def generate_download_link():
 
-    original_link = 'data/test_audio.wav'
-    subdir = generate_random_string(8)
-    file_name = 'NanowarOfSteel_XX_Years_Of_Steel_FULL_SHOW.wav'
+    form = '.wav'
+    url_base = 'www.nanowar.it/XX_YEARS_OF_STEEL'
+    old_link = f'short{form}'
+    tmp_str = generate_random_string(8)
+    file_name = 'Nanowar_Of_Steel_XX_Years_Of_Steel_FULL_SHOW'
+    tmp_path = f'TMP/{tmp_str}'
+    new_link = f'{tmp_path}/{file_name}{form}'
+    copy_file_ftp(url_base, tmp_path, old_link, new_link)
     
-    os.mkdir(f'tmp/{subdir}')
-    new_link = f'tmp/{subdir}/{file_name}'
-    shutil.copy(original_link, new_link)
-
-    return new_link
-
+    download_link = f'http://{url_base}/{tmp_path}/{file_name}{form}'
+    
+    return download_link
 
 def random_code_generator():
     
@@ -90,7 +140,8 @@ if __name__ == '__main__':
     #pkl.dump(codes, open('data/videocodes.pkl', 'wb'))
     codes = pkl.load(open('data/videocodes.pkl', 'rb'))
     #print(codes)
-
+    
+    """
     codes_df = pd.DataFrame()
     code_used = [0 for i in range(len(codes))]
     used_date = ['00-00-0000' for i in range(len(codes))]
@@ -99,9 +150,9 @@ if __name__ == '__main__':
     codes_df['Used_date'] = used_date
 
     print(codes_df.head())
-    
-
     codes_df.to_pickle('data/video_code_df.pkl')
+    """
 
+    generate_download_link()
 
 

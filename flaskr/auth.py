@@ -40,6 +40,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        print(f'Trying to login with u: {username} and p: {password}')
         db = get_db()
         error = None
         user = db.execute(
@@ -70,7 +71,10 @@ def logout():
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if g.user == None:
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash("You need to login first")
             return redirect(url_for('auth.login'))
 
         return view(**kwargs)

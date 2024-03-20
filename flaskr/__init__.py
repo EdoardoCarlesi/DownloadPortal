@@ -6,7 +6,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        DATABASE=os.path.join(app.instance_path, 'xx_years.sqlite'),
     )
 
     if test_config is None:
@@ -18,14 +18,17 @@ def create_app(test_config=None):
 
     # ensure the instance folder exists
     try:
-        os.makedirs(app.instance_path)
+        if not os.path.isdir(app.instance_path):
+            os.makedirs(app.instance_path)
+        else:
+            print(f'Instance path already exists: {app.instance_path}')
     except OSError:
-        pass
+        print(f'Instance path does not exist: {app.instance_path}')
 
     # a simple page that says hello
-    @app.route('/hello')
+    @app.route('/liechtenstein')
     def hello():
-        return 'Hello, World!'
+        return 'Hail to Liechtenstein!'
 
     from . import db
     db.init_app(app)

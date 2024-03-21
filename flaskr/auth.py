@@ -2,6 +2,8 @@ import functools
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
+import pickle as pkl
+import pandas as pd
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -10,23 +12,25 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        code = request.form['code']
         db = get_db()
         error = None
-
         if not username:
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
+        elif not code:
+            error = 'Code is required.'
 
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password, code) VALUES (?, ?, ?)",
+                    (username, generate_password_hash(password), code),
                 )
                 db.commit()
             except db.IntegrityError:
-                error = f"User {username} is already registered."
+                error = f"User {username} or code {code} is already registered. Try registering with a different code or username."
             else:
                 return redirect(url_for("auth.login"))
 
@@ -37,10 +41,11 @@ def register():
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    session['logged_in'] = False
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        print(f'Trying to login with u: {username} and p: {password}')
         db = get_db()
         error = None
         user = db.execute(
@@ -55,6 +60,7 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
+            session['logged_in'] = True
             return redirect(url_for('video.play'))
 
         flash(error)
@@ -64,15 +70,21 @@ def login():
 
 @bp.route('/logout')
 def logout():
-    session.clear()
-    return redirect(url_for('index'))
+    
+    if session['logged_in']:
+        flash('Logged out succesfully.')
+        session.clear()
+    else:
+        flash('Logging out without loggin in first does not make much sense')
+
+    return redirect(url_for('auth.login'))
 
 
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
+        if session['logged_in']: # in session:
+            print("Login successful!")
         else:
             flash("You need to login first")
             return redirect(url_for('auth.login'))

@@ -27,11 +27,13 @@ def create_app(test_config=None):
 
     # a simple page that says hello
     @app.route('/liechtenstein')
-    def hello():
+    def liechtenstein():
         return 'Hail to Liechtenstein!'
 
     from . import db
     db.init_app(app)
+
+    print('App intialized')
 
     from . import auth
     app.register_blueprint(auth.bp)

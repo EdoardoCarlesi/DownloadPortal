@@ -1,69 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Video Player</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://vjs.zencdn.net/5.15.1/video-js.css">
-    <link rel="stylesheet" href="/static/main.css">
-  </head>
-  <body>
-    <section class="container">
-      <div class="video-container col-md-12">
-        <div class="url"> {{ url }}</div>
+{% extends 'base.html' %}
 
-        <video class="video-js vjs-default-skin" id="video-1" src="{{ url }}" type="video/mp4">
-          <!--<source src="{{ url }}">-->
-	  <!-- <source src="http://www.nanowar.it/XX_YEARS_OF_STEEL/disco_metal.mp4" type="video/mp4">-->
-        </video>
+{% block header %}
+<h1>{% block title %}Video Player{% endblock %}</h1><br><br>
+{% endblock %}
 
-      </div>
-    </section>
+{% block content %}
+  <style>
+    /* CSS for custom video player */
+    #video-container {
+      width: 60%; /* Set the width of the container */
+      margin: 0 auto; /* Center the container horizontally */
+      position: relative; /* Set position to relative for absolute positioning of video player */
+      background-color: black;
+      display: flex;
+      justify-content: center; /* Center content horizontally */
+      align-items: center; /* Center content vertically */
+    }
 
-    <!--<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>-->
-    <script src="http://vjs.zencdn.net/5.15.1/video.js"></script>
-    <script src="//cdn.sc.gl/videojs-hotkeys/latest/videojs.hotkeys.min.js"></script>
+    #video-player {
+      width: 100%; /* Set the width of the video player */
+    }
+  </style>
+  <video id="video-player" controls>
+    <!-- Predefined URL for the video -->
+    <source src="{{ url }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
 
-    <script type='text/javascript'>
-      var video = videojs("video-1", {
-        autoplay: true,
-        preload: true,
-        controls: true,
-        aspectRatio: '16:9',
-        playbackRates: [0.7, 1, 1.15, 1.25, 1.5, 2] 
+  <script>
+    // JavaScript for customizing video player
+    window.onload = function() {
+      var videoPlayer = document.getElementById('video-player');
+
+      // Customize video player controls
+      videoPlayer.controls = true;
+
+      // Add event listener for when video metadata is loaded
+      videoPlayer.addEventListener('loadedmetadata', function() {
+        console.log('Video metadata loaded');
+        // You can add additional customization here if needed
       });
-      video.ready(function() {
-        this.hotkeys({
-          volumeStep: 0.1,
-          seekStep: 5,
-          enableModifiersForNumbers: true, 
-          alwaysCaptureHotkeys: true,
-          customKeys: {
-            speedUp: {
-              key: function(event) {
-                // Toggle something with shift >
-                return (event.shiftKey && event.which === 190);
-              },
-              handler: function(player, options, event) {
-                var p = player.playbackRate();
-                var list = player.options_.playbackRates;
-                if(to = list[list.indexOf(p) + 1] ) player.playbackRate(to)
-              }
-            },
-            speedDown: {
-              key: function(event) {
-                // Toggle something with shift <
-                return (event.shiftKey && event.which === 188);
-              },
-              handler: function(player, options, event) {
-                var p = player.playbackRate();
-                var list = player.options_.playbackRates;
-                if(to = list[list.indexOf(p) - 1] ) player.playbackRate(to)
-              }
-            }
-          }
-        });
+
+      // Add event listener for when video playback starts
+      videoPlayer.addEventListener('play', function() {
+        console.log('Video playback started');
+        // You can add additional actions here if needed
       });
-    </script>
-  </body>
-</html>
+
+      // Add event listener for when video playback pauses
+      videoPlayer.addEventListener('pause', function() {
+        console.log('Video playback paused');
+        // You can add additional actions here if needed
+      });
+
+      // Add event listener for when video playback ends
+      videoPlayer.addEventListener('ended', function() {
+        console.log('Video playback ended');
+        // You can add additional actions here if needed
+      });
+    };
+  </script>
+{% endblock %}

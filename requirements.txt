@@ -1,5 +1,4 @@
 shutils
-sqlite3
 flask-login
 flask
 pandas

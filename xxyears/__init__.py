@@ -1,4 +1,5 @@
 import os
+import flask
 from flask import Flask
 
 def create_app(test_config=None):
@@ -30,6 +31,10 @@ def create_app(test_config=None):
     def liechtenstein():
         return 'Hail to Liechtenstein!'
 
+    @app.route('/')
+    def index():
+        return flask.render_template('video/index.html')
+
     from . import db
     db.init_app(app)
 
@@ -37,7 +42,7 @@ def create_app(test_config=None):
 
     from . import auth
     app.register_blueprint(auth.bp)
-    app.add_url_rule('/', endpoint='auth.register')
+    app.add_url_rule('/auth', endpoint='auth.register')
 
     from . import video
     app.register_blueprint(video.bp)

@@ -7,10 +7,6 @@ bp = Blueprint('video', __name__, url_prefix='/video')
 
 url = 'http:////www.nanowar.it/XX_YEARS_OF_STEEL/disco_metal.mp4'
 
-#@bp.route('/')
-#def index():
-#    return render_template('video/index.html')
-
 @bp.route('/play', methods=('GET', 'POST'))
 @login_required
 def play():

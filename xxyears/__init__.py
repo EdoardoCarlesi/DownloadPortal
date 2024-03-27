@@ -40,6 +40,10 @@ def create_app(test_config=None):
 
     print('App intialized')
 
+    from . import payment
+    app.register_blueprint(payment.bp)
+    app.add_url_rule('/payment', endpoint='payment.payment')
+
     from . import auth
     app.register_blueprint(auth.bp)
     app.add_url_rule('/auth', endpoint='auth.register')
@@ -47,9 +51,5 @@ def create_app(test_config=None):
     from . import video
     app.register_blueprint(video.bp)
     app.add_url_rule('/video', endpoint='video.play')
-
-    #from . import blog
-    #app.register_blueprint(blog.bp)
-    #app.add_url_rule('/', endpoint='index')
     
     return app

@@ -22,8 +22,8 @@
         },
         // Finalize the transaction after payer approval
         // Finalize the transaction on the server after payer approval
-        onApprove: (data, actions) => {
-            return fetch(`/payment/${data.orderID}/capture`, {
+	onApprove: (data, actions) => {
+		return fetch(`/payment/${data.orderID}/capture`, {
                 method: "post",
             })
                 .then((response) => response.json())
@@ -34,8 +34,9 @@
                     // alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
                     // When ready to go live, remove the alert and show a success message within this page. For example:
                     const element = document.getElementById('paypal-button-container');
-                    element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                    // Or go to another URL:  actions.redirect('thank_you.html');
+                    //element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                    // Or go to another URL: 
+		    //actions.redirect('/auth/login');
                 });
         }
     }).render('#paypal-button-container');

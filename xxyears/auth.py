@@ -3,8 +3,10 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 from werkzeug.security import check_password_hash, generate_password_hash
 try:
     from xxyears.db import get_db
+    import xxyears.codes
 except:
     from db import get_db
+    import codes
 
 import pickle as pkl
 import pandas as pd
@@ -26,8 +28,10 @@ def register():
         elif not code:
             error = 'Code is required.'
 
-        if not check_code(code):
+        if not codes.is_code_valid(code):
             error = 'Wrong code given.'
+        else:
+            codes.remove_code_from_list(code)
 
         if error is None:
             try:
@@ -100,19 +104,8 @@ def login_required(view):
 
     return wrapped_view
 
-
-def check_code(code):
-
-    valid_codes = pkl.load(open('xxyears/static/videocodes.pkl', 'rb'))
-
-    if code in valid_codes:
-        return True
-    else:
-        return False
-
 if __name__ == '__main__':
 
     test_code = 'legacy-uranus-rhapsody-4669'
-    check_code(test_code)
 
 

@@ -43,6 +43,7 @@ def create_app(test_config=None):
     from . import payment
     app.register_blueprint(payment.bp)
     app.add_url_rule('/payment', endpoint='payment.payment')
+    app.add_url_rule('/payment/success', endpoint='payment.success')
 
     from . import auth
     app.register_blueprint(auth.bp)

@@ -23,10 +23,11 @@ def capture_payment(order_id):  # Checks and confirms payment
     captured_payment = paypal_capture_function(order_id)
     
     if is_approved_payment(captured_payment):
-        flash("Payment approved")
-        flash("Your code is: cazzo-di-cane-6789")
-        return redirect(url_for('payment.success'))
-        #return jsonify(captured_payment)
+        #flash("Payment approved")
+        #flash("Your code is: cazzo-di-cane-6789")
+        #return redirect(url_for('payment.success'))
+        captured_payment['code_video'] = 'cazzo-di-cane-morto'
+        return jsonify(captured_payment)
     else:
         flash("Payment not approved!")
         # generate some wrong order page 
@@ -46,10 +47,11 @@ def paypal_capture_function(order_id):
     json_data = response.json()
     return json_data
     
-@bp.route('/success', methods=['GET'])
+@bp.route('/success') #, methods=['GET', 'POST'])
 def success():
     print('Payment successful!')
-    return render_template('payment/success.html')
+    code = 'cazzo-di-cane-malato'
+    return render_template('payment/success.html', code=code)
 
 
 def is_approved_payment(captured_payment):

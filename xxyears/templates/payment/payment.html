@@ -34,9 +34,14 @@
                     // alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
                     // When ready to go live, remove the alert and show a success message within this page. For example:
                     const element = document.getElementById('paypal-button-container');
-                    //element.innerHTML = '<h3>Thank you for your payment!</h3>';
+			element.innerHTML = '<br><br><br><h3>Thank you for your payment!</h3><br>Check out your mail or the pop up window to retrieve your access code.';
+                    //const code = orderData.id;
+		    //document.getElementById('code').innerHTML = code;
+		    //element.innerHTML = '<h2>Your video code is: <p id="code"></p></h2>';
                     // Or go to another URL: 
-		    //actions.redirect('/auth/login');
+		    //actions.redirect('/payment/success');
+		    window.open('/payment/success');
+		    //window.open('www.paypal.it');
                 });
         }
     }).render('#paypal-button-container');

@@ -8,3 +8,4 @@ Jinja2
 Werkzeug
 paypal
 gunicorn
+mysql-connector-python

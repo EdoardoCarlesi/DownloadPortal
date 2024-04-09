@@ -5,6 +5,7 @@ from requests.auth import HTTPBasicAuth
 import requests
 import os
 from . import codes
+from . import mail
 import pickle as pkl
 
 bp = Blueprint('payment', __name__, url_prefix='/payment')
@@ -13,7 +14,7 @@ PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_SANDBOX_ID")
 PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_SANDBOX_PW")
 PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
 paypal_id=f"https://www.paypal.com/sdk/js?client-id={PAYPAL_BUSINESS_CLIENT_ID}&currency=EUR"
-tmp_video_code = 'video_code.tmp'
+tmp_captured = 'captured.tmp'
 
 @bp.route('/payment', methods=['POST'])
 def payment():
@@ -27,7 +28,7 @@ def capture_payment(order_id):  # Checks and confirms payment
         code_bought = codes.draw_random_code()
         captured_payment['code_video'] = code_bought
         codes.remove_code_from_list(code_bought)
-        pkl.dump(code_bought, open(tmp_video_code, 'wb'))
+        pkl.dump(captured_payment, open(tmp_captured, 'wb'))
         return jsonify(captured_payment)
     else:
         flash("Payment not approved!")
@@ -46,7 +47,11 @@ def paypal_capture_function(order_id):
     
 @bp.route('/success') 
 def success():
-    video_code = pkl.load(open(tmp_video_code, 'rb'))
+    captured_payment = pkl.load(open(tmp_captured, 'rb'))
+    mail_to = captured_payment["payment_source"]["paypal"]["email_address"]
+    video_code = captured_payment["code_video"]
+    mail.sendmail(mail_to=mail_to, code=video_code)
+    os.remove(tmp_captured)
     return render_template('payment/success.html', code=video_code)
 
 def is_approved_payment(captured_payment):
@@ -55,10 +60,6 @@ def is_approved_payment(captured_payment):
     amount = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get("value")
     currency_code = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get(
         "currency_code")
-    
-    #print(f"Payment happened. Details: {status}, {amount}, {currency_code}, {email}")
-    #video_code = pkl.load(open(tmp_video_code, 'rb'))
-    #flash(f"Payment approved.\nDetails: {status}, {amount}, {currency_code}, {email}, {video_code}")
  
     if status == "COMPLETED":
         code_bought = codes.draw_random_code()

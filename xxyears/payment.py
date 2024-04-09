@@ -47,19 +47,21 @@ def paypal_capture_function(order_id):
 @bp.route('/success') 
 def success():
     video_code = pkl.load(open(tmp_video_code, 'rb'))
-    print('Payment successful! Code: ', video_code)
     return render_template('payment/success.html', code=video_code)
 
 def is_approved_payment(captured_payment):
     status = captured_payment.get("status")
-    print(captured_payment)
     email = captured_payment["payment_source"]["paypal"]["email_address"]
     amount = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get("value")
     currency_code = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get(
         "currency_code")
-    print(f"Payment happened. Details: {status}, {amount}, {currency_code}, {email}")
+    
+    #print(f"Payment happened. Details: {status}, {amount}, {currency_code}, {email}")
+    #video_code = pkl.load(open(tmp_video_code, 'rb'))
+    #flash(f"Payment approved.\nDetails: {status}, {amount}, {currency_code}, {email}, {video_code}")
  
     if status == "COMPLETED":
+        code_bought = codes.draw_random_code()
         return True
     else:
         return False

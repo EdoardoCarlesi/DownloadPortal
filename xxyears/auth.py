@@ -100,9 +100,14 @@ def logout():
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if session['logged_in']: # in session:
-            print("Login successful!")
-        else:
+
+        try:
+            if session['logged_in']: # in session:
+                print("Login successful!")
+            else:
+                flash("You need to login first")
+                return redirect(url_for('auth.login'))
+        except:
             flash("You need to login first")
             return redirect(url_for('auth.login'))
 

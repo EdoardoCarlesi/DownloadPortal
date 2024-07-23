@@ -1,7 +1,6 @@
 import flask
 from requests.auth import HTTPBasicAuth
 import os
- 
 
 app = flask.Flask(__name__)
 
@@ -24,7 +23,6 @@ IB_TAX_APP_PRICE_CURRENCY = "EUR"
 def paypal_payment():
     return render_template("payment.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID,
                            price=IB_TAX_APP_PRICE, currency=IB_TAX_APP_PRICE_CURRENCY)
- 
  
 @app.route("/payment/<order_id>/capture", methods=["POST"])
 def capture_payment(order_id):  # Checks and confirms payment

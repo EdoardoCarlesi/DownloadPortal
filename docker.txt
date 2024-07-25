@@ -1,0 +1,3 @@
+BUILD
+docker build -t xxyears:v0 -f Dockerfile.xxyears .
+docker run -i -t xxyears:v0 

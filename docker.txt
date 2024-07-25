@@ -1,3 +1,6 @@
 BUILD
-docker build -t xxyears:v0 -f Dockerfile.xxyears .
-docker run -i -t xxyears:v0 
+docker build -t xxyears .
+docker run -d -p 5000:5000 xxyears 
+
+docker volume create xxyears-db
+docker run -dp 127.0.0.1:3000:3000 --mount type=volume,src=xxyears-db,target=/app/instance

@@ -1,0 +1,11 @@
+instance
+old_bkp
+__pycache__
+tmp/*
+tests
+Dockerfile
+Dockerfile.db
+docker.txt
+commands.txt
+activate
+README.md

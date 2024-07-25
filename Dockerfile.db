@@ -13,7 +13,4 @@ COPY . /app
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 5000
-
-#CMD ["flask", "--app", "xxyears", "init-db"]
-CMD ["flask", "--app", "xxyears", "run", "--host=0.0.0.0"] 
+CMD ["flask", "--app", "xxyears", "init-db"]

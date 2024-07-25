@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+    ports:
+  
+  db:
+
+volumes:
+  vol-db:
+
+

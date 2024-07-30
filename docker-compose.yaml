@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+    ports:
+  
+  db:
+
+volumes:
+  vol-db:
+
+

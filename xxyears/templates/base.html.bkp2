@@ -117,29 +117,17 @@
 
     <script src="https://getbootstrap.com/docs/5.3/examples/cover/#:~:text=/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
-<button
-      data-mdb-collapse-init
-      class="navbar-toggler"
-      type="button"
-      data-mdb-target="#navbarButtonsExample"
-      aria-controls="navbarButtonsExample"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <i class="fas fa-bars"></i>
-    </button>
-
-
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
   <header class="mb-auto">
     <div>
-    <nav class="nav navbar-dark bg-primary">
-    <li><a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">HOME</a>
-    <li><a class="nav-link active" aria-current="page" href="{{ url_for('video.play') }}">VIDEO</a>
-    <li><a class="nav-link active" aria-current="page" href="{{ url_for('auth.register') }}">SIGN UP</a>
-    <li><a class="nav-link active" aria-current="page" href="{{ url_for('auth.login') }}">SIGN IN</a>
-    <li><a class="nav-link active" aria-current="page" href="{{ url_for('auth.logout') }}">SIGN OUT</a>
-    </nav>
+      <nav class="nav nav-masthead justify-content-center float-md-end">
+    <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
+    <a class="nav-link active" aria-current="page" href="{{ url_for('video.play') }}">Play Video</a>
+    <a class="nav-link active" aria-current="page" href="{{ url_for('payment.payment') }}">Buy Code</a>
+    <a class="nav-link active" aria-current="page" href="{{ url_for('auth.register') }}">Register</a>
+    <a class="nav-link active" aria-current="page" href="{{ url_for('auth.login') }}">Log In</a>
+    <a class="nav-link active" aria-current="page" href="{{ url_for('auth.logout') }}">Log Out</a>
+      </nav>
     </div>
   </header>
 

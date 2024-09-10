@@ -26,7 +26,7 @@ def capture_payment(order_id):  # Checks and confirms payment
     captured_payment = paypal_capture_function(order_id)
     
     if is_approved_payment(captured_payment):
-        code_bought = codes.draw_random_code()
+        code_bought = codes.draw_random_sell_code()
         captured_payment['code_video'] = code_bought
         codes.remove_code_from_list(code_bought)
         pkl.dump(captured_payment, open(tmp_captured, 'wb'))
@@ -63,7 +63,6 @@ def is_approved_payment(captured_payment):
         "currency_code")
  
     if status == "COMPLETED":
-        code_bought = codes.draw_random_code()
         return True
     else:
         return False

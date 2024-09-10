@@ -10,6 +10,7 @@
       <p><strong>Email:</strong> {{ user['email'] }}</p>
       <p><strong>Registration Code:</strong> {{ user['code'] }}</p>
       <p><strong>Registration Date:</strong> {{ user['registration_date'] }}</p>
+      <p><strong>Code Type:</strong> {% if user['code_sell'] %}Purchased code{% else %}Redeemed code{% endif %}</p>
     {% else %}
       <p>No user data available. Please log in.</p>
     {% endif %}

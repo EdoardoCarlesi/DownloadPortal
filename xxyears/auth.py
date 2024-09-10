@@ -24,8 +24,6 @@ app = Flask(__name__)
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
 
-    print(codes.draw_random_code())
-
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -45,11 +43,13 @@ def register():
         else:
             codes.remove_code_from_list(code)
 
+        code_sell = codes.is_code_sell(code)
+
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (email, password, code) VALUES (?, ?, ?)",
-                    (email, generate_password_hash(password), code),
+                    "INSERT INTO user (email, password, code, code_sell) VALUES (?, ?, ?, ?)",
+                    (email, generate_password_hash(password), code, code_sell),
                 )
                 db.commit()
             except db.IntegrityError:

@@ -5,6 +5,7 @@ CREATE TABLE user (
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   code TEXT UNIQUE NOT NULL,
+  code_sell BOOLEAN,
   registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

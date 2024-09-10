@@ -18,6 +18,7 @@ tmp_captured = 'captured.tmp'
 
 @bp.route('/payment', methods=['POST'])
 def payment():
+    print('paypal_id: ', paypal_id)
     return render_template('payment/payment.html', paypal_id=paypal_id)
 
 @bp.route("/<order_id>/capture", methods=["POST"])

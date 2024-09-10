@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block content %}
-
 <script src="{{ paypal_id }}"></script>
-<div id="paypal-button-container"></div>
+
+<div id="paypal-button-container" style="display: flex; justify-content: center;"></div>
 <script>
     paypal.Buttons({
         // Sets up the transaction when a payment button is clicked
@@ -21,7 +21,7 @@
             });
         },
         
-		    // Finalize the transaction on the server after payer approval
+    // Finalize the transaction on the server after payer approval
 	onApprove: (data, actions) => {
 		return fetch(`/payment/${data.orderID}/capture`, {
                 method: "post",
@@ -34,9 +34,10 @@
 		    
 		    // Redirect to success page
 		    window.location.assign('/payment/success');
-                });
+            });
         }
     }).render('#paypal-button-container');
 </script>
-
+<br>
+<br>
 {% endblock %}

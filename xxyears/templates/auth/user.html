@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}User Account Details{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="user-account">
+    {% if user %}
+      <p><strong>Email:</strong> {{ user['email'] }}</p>
+      <p><strong>Registration Code:</strong> {{ user['code'] }}</p>
+      <p><strong>Registration Date:</strong> {{ user['registration_date'] }}</p>
+    {% else %}
+      <p>No user data available. Please log in.</p>
+    {% endif %}
+  </div>
+{% endblock %}

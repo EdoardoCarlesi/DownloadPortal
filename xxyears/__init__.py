@@ -36,6 +36,11 @@ def create_app(test_config=None):
     def index():
         return flask.render_template('video/index.html')
 
+    @app.route('/gdpr')
+    def gdpr():
+        return flask.render_template('gdpr.html')
+
+
     from . import db
     db.init_app(app)
     print('App intialized')

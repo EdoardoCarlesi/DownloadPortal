@@ -13,3 +13,5 @@ python-secrets
 pyOpenSSL
 flask-mail
 Flask-Mail
+reportlab
+schedule

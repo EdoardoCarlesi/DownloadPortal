@@ -20,9 +20,20 @@ def close_db(e=None):
     if db is not None:
         db.close()
 
+import os
 
 def init_db():
     db = get_db()
+    db_path = current_app.config['DATABASE']
+
+    if os.path.exists(db_path):
+        reset = input("Database already exists. Do you want to reset it? [Y/n] ")
+        if reset in ['Y']:
+            click.echo('Database reset completed. Old database removed.')
+            os.remove(db_path)
+        else:
+            click.echo('Database initialization cancelled. Database already exists.')
+            return
 
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
@@ -30,9 +41,9 @@ def init_db():
 
 @click.command('init-db')
 def init_db_command():
-    """Clear the existing data and create new tables."""
+    """Initialize the database or reset if it already exists."""
     init_db()
-    click.echo('Initialized the database.')
+    click.echo('Database initialized.')
 
 
 def init_app(app):
@@ -41,5 +52,5 @@ def init_app(app):
 
 
 if __name__ == '__main__':
-
-    remote_db_connect()
+    init_db()
+    #remote_db_connect()

@@ -45,6 +45,10 @@ def create_app(test_config=None):
     db.init_app(app)
     print('App intialized')
 
+    from . import report
+    report.init_report_command(app)
+    print('Report generated successfully')
+
     from . import payment
     app.register_blueprint(payment.bp)
     app.add_url_rule('/payment', endpoint='payment.payment')

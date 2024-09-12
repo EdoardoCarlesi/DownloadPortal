@@ -51,7 +51,7 @@ def success():
     captured_payment = pkl.load(open(tmp_captured, 'rb'))
     mail_to = captured_payment["payment_source"]["paypal"]["email_address"]
     video_code = captured_payment["code_video"]
-    mail.sendmail(mail_to=mail_to, code=video_code)
+    mail.sendmail(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
     os.remove(tmp_captured)
     return render_template('payment/success.html', code=video_code)
 

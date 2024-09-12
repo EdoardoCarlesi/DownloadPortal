@@ -140,7 +140,6 @@ def reset_password():
 
             # Generate the reset link
             reset_link = url_for('auth.reset_password_confirm', token=token, _external=True)
-
             # Send email with reset link
             smtp_server = 'smtp.xxyearsofsteel.com'
             smtp_port = 587

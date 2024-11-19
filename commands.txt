@@ -1,2 +1,4 @@
 flask --app xxyears init-db
 flask --app xxyears run
+
+cvlc live_buelach.mp4 --sout '#http{mux=ts,dst=:8080}' --sout-all --sout-keep

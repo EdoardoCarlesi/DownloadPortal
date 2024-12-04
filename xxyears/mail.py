@@ -76,11 +76,9 @@ def sendmail(to : str, subject : str, code : str):
  using the code: 
  {code} 
 
- You can then access the XX Years Of Steel video entering the (incredible) video section of the website, where 
- you will find some download links. The download links change regularly so make sure you download the videos as soon
- as you log in, and in case one of them does not work try to refresh the page or log out & log in again.
+ You can now register on the XX Years Of Steel portal using this code.
 
- Enjoy the show! 
+ That's moderately amazing! 
 
                     - Yours truly, Nanowar Of Steel
 

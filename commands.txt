@@ -8,6 +8,7 @@ systemctl restart nginx
 
 supervisorctl reread
 supervisorctl update
+supervisorctl start xxyears_gunicorn
 supervisorctl status xxyears_gunicorn
 supervisorctl stop xxyears_gunicorn
 

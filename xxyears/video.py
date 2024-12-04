@@ -3,28 +3,39 @@ from flask import (
 )
 from xxyears.auth import login_required
 import json
+import glob
+from ftplib import FTP
 
+with open('json/.ftp_credentials.json') as file:
+        credentials = json.load(file)
+        
+password = credentials['password']   
+username = credentials['username']   
+server = credentials['server']   
+ftp = FTP(server)
+ftp.login(user=username, passwd=password)
+    
+ftp_path = 'www.nanowar.it/XX_YEARS_OF_STEEL/FULL_VIDEO/'
+http_path = 'http://www.nanowar.it/XX_YEARS_OF_STEEL/FULL_VIDEO/'
 
-file_path = 'json/video_filenames.json'
+# Change to the specified directory
+ftp.cwd(ftp_path)
 
-with open(file_path) as file:
-    filenames = json.load(file)
+files = ftp.nlst()
+mp4_files = [file for file in sorted(files) if file.endswith('.mp4')]
+
+print(files)
+
+urls = []
+
+if mp4_files:
+    for file in mp4_files:
+        urls.append(http_path + file)           
 
 bp = Blueprint('video', __name__, url_prefix='/video')
-
-fname1 = filenames['filename1']
-fname2 = filenames['filename2']
-fname3 = filenames['filename3']
-
-fformat = 'png'
-#fformat = 'mp4'
-
-url1 = f'http:////www.nanowar.it/XX_YEARS_OF_STEEL/{fname1}.{fformat}'
-url2 = f'http:////www.nanowar.it/XX_YEARS_OF_STEEL/{fname2}.{fformat}'
-url3 = f'http:////www.nanowar.it/XX_YEARS_OF_STEEL/{fname3}.{fformat}'
 
 @bp.route('/play', methods=('GET', 'POST'))
 @login_required
 def play():
-    return render_template('video/videoplayer.html', url1=url1, url2=url2, url3=url3);
+    return render_template('video/videoplayer.html', url1=urls[0], url2=urls[1], url3=urls[2]);
 

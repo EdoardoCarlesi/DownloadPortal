@@ -35,7 +35,7 @@ def draw_random_code():
 def is_code_valid(code):
     
     codes_valid = pkl.load(open(CODES_FILE_VALID, 'rb'))
-    print(len(codes_valid))
+    #print(len(codes_valid))
     if code in codes_valid:
         return True
     else:
@@ -77,7 +77,9 @@ def remove_code_from_list(code):
 
 if __name__ == '__main__':
 
-    this_code = draw_random_sell_code()
-    print(this_code)
+    #this_code = draw_random_sell_code()
+    
+    this_code = 'houdini-requiem-ironmonger-6544'
+    draw_random_sell_code()
     print(is_code_valid(this_code))
     #remove_code_from_list(this_code)

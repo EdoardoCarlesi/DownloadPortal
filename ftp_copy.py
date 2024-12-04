@@ -142,10 +142,24 @@ def change_fnames(file_path='json/video_filenames.json', new_file_root='LiveAlca
     with open(file_path) as file:
         filename = json.load(file)
     
+    ftp.cwd(ftp_path)
+                
     password = credentials['password']   
     username = credentials['username']   
     server = credentials['server']   
-    
+    ftp = FTP(server)
+    ftp.login(user=username, passwd=password)
+        
+    ftp_path = 'www.nanowar.it/XX_YEARS_OF_STEEL/FULL_VIDEO/'
+    http_path = 'http://www.nanowar.it/XX_YEARS_OF_STEEL/FULL_VIDEO/'
+
+    # Change to the specified directory
+    ftp.cwd(ftp_path)
+
+    files = ftp.nlst()
+    mp4_files = [file for file in sorted(files) if file.endswith('.mp4')]
+
+
     current1 = filename['filename1']
     current2 = filename['filename2']
     current3 = filename['filename3']

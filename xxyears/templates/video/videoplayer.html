@@ -1,33 +1,40 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Video Player{% endblock %}</h1><br><br>
+<h1>{% block title %}Video Download{% endblock %}</h1><br><br>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* Style for links */
+    .styled-link {
+        color: blue;          /* Blue color */
+        font-weight: bold;    /* Bold font */
+        text-decoration: underline; /* Underlined */
+    }
+
+    /* Style for visited links */
+    .styled-link:visited {
+        color: purple;        /* Purple for clicked links */
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-  <style>
-    /* CSS for custom video player */
-    #video-container {
-      width: 60%; /* Set the width of the container */
-      margin: 0 auto; /* Center the container horizontally */
-      position: relative; /* Set position to relative for absolute positioning of video player */
-      background-color: black;
-      display: flex;
-      justify-content: center; /* Center content horizontally */
-      align-items: center; /* Center content vertically */
-    }
-
-    #video-player {
-      width: 100%; /* Set the width of the video player */
-    }
-    
-    #resolutionSelector {
-      margin-top: 10px;
-      display: block;
-      width: 100%;
-      max-width: 800px;
-      margin: 10px auto;
-  }
+<div class="download-links">
+    <p>
+    The files are available for download in Full HD:
+    </p>
+    <br>
+    <ul>
+		<a href="{{ url1 }}" class="styled-link" download>XX YEARS OF STEEL CONCERT - PART 1</a>
+    <br>
+		<a href="{{ url2 }}" class="styled-link" download>XX YEARS OF STEEL CONCERT - PART 2</a>
+    <br>
+		<a href="{{ url3 }}" class="styled-link" download>XX YEARS OF STEEL CONCERT - PART 3</a>
+    <br>
+    </ul>
+</div>
 
   </style>
 {% endblock %}

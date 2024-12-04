@@ -140,10 +140,11 @@ def reset_password():
 
             # Generate the reset link
             reset_link = url_for('auth.reset_password_confirm', token=token, _external=True)
+
             # Send email with reset link
             smtp_server = 'smtp.xxyearsofsteel.com'
             smtp_port = 587
-            smtp_username = os.environ.get('SMTP_USERNAME')
+            smtp_username = os.environ.get('SMTP_USERNAME_RESET')
             smtp_password = os.environ.get('SMTP_PASSWORD')
 
             msg = MIMEMultipart()
@@ -152,6 +153,8 @@ def reset_password():
             msg['Subject'] = 'Password Reset Request'
             msg.attach(MIMEText(f'Click the following link to reset your password: {reset_link}', 'plain'))
 
+            print(smtp_server, smtp_port)
+        
             with smtplib.SMTP(smtp_server, smtp_port) as server:
                 server.starttls()
                 server.login(smtp_username, smtp_password)

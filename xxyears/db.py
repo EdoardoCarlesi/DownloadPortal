@@ -1,5 +1,6 @@
 import sqlite3
 import click
+import os
 from flask import current_app, g
 import mysql.connector as mysql
 
@@ -20,20 +21,22 @@ def close_db(e=None):
     if db is not None:
         db.close()
 
-import os
 
 def init_db():
     db = get_db()
     db_path = current_app.config['DATABASE']
 
+    """
     if os.path.exists(db_path):
         reset = input("Database already exists. Do you want to reset it? [Y/n] ")
+        
         if reset in ['Y']:
             click.echo('Database reset completed. Old database removed.')
             os.remove(db_path)
         else:
             click.echo('Database initialization cancelled. Database already exists.')
-            return
+            exit()
+    """
 
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
@@ -53,4 +56,3 @@ def init_app(app):
 
 if __name__ == '__main__':
     init_db()
-    #remote_db_connect()

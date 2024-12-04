@@ -129,7 +129,7 @@ def change_fname(file_path='json/video_filename.json', new_file_root='discoMetal
     dump_to_json(filename, file_path)
 
 
-def change_fnames(file_path='json/video_filenames.json', new_file_root='XX_Years_Of_Steel_Part'):
+def change_fnames(file_path='json/video_filenames.json', new_file_root='LiveAlcatraz_Part'):
  
     rand_str = generate_random_string(8)
     new_file_root = 'file_test'

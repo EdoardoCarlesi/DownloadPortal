@@ -24,8 +24,6 @@ ftp.cwd(ftp_path)
 files = ftp.nlst()
 mp4_files = [file for file in sorted(files) if file.endswith('.mp4')]
 
-print(files)
-
 urls = []
 
 if mp4_files:

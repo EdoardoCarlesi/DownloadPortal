@@ -41,6 +41,7 @@ def register():
             error = 'Code is required.'
 
         if not codes.is_code_valid(code):
+            print('Code given: ', code)
             error = 'Wrong code given. Probably it is spelled wrong or it has already been used.'
         else:
             codes.remove_code_from_list(code)

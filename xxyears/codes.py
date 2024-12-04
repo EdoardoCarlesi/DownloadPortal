@@ -4,6 +4,7 @@ import numpy as np
 
 CODES_FILE_ORIGINAL = 'xxyears/static/videocodes.pkl'
 CODES_FILE_SELL = 'xxyears/static/videocodes_sell.pkl'
+CODES_FILE_VALID = 'xxyears/static/valid_codes.pkl'
 
 def get_codes():
 
@@ -33,9 +34,9 @@ def draw_random_code():
 
 def is_code_valid(code):
     
-    co, cs = get_codes()
-
-    if (code in co) or (code in cs):
+    codes_valid = pkl.load(open(CODES_FILE_VALID, 'rb'))
+    
+    if code in codes_valid:
         return True
     else:
         return False
@@ -76,4 +77,4 @@ if __name__ == '__main__':
 
     this_code = draw_random_code()
     print(is_code_valid(this_code))
-    #remove_code_from_list(this_code)
+    remove_code_from_list(this_code)

@@ -76,4 +76,4 @@ if __name__ == '__main__':
 
     this_code = draw_random_code()
     print(is_code_valid(this_code))
-    remove_code_from_list(this_code)
+    #remove_code_from_list(this_code)

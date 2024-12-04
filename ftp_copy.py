@@ -133,7 +133,7 @@ def change_fnames(file_path='json/video_filenames.json', new_file_root='LiveAlca
  
     rand_str = generate_random_string(8)
     new_file_root = 'file_test'
-    file_format = 'png'
+    file_format = 'mp4'
 
     with open('json/.ftp_credentials.json') as file:
         credentials = json.load(file)

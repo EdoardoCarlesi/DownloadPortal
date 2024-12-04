@@ -62,7 +62,7 @@ def send_report(mail_to='gatto@nanowar.it', subject='Video Stream Monthly Report
     # Send email with sales report attached
     smtp_server = 'smtp.xxyearsofsteel.com'
     smtp_port = 587
-    smtp_username = os.environ.get('SMTP_USERNAME_SEND')
+    smtp_username = os.environ.get('SMTP_USERNAME_SALES')
     smtp_password = os.environ.get('SMTP_PASSWORD')
 
     msg = MIMEMultipart()

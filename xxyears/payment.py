@@ -10,9 +10,13 @@ import pickle as pkl
 
 bp = Blueprint('payment', __name__, url_prefix='/payment')
 
-PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_SANDBOX_ID")
-PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_SANDBOX_PW")
-PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
+#PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_SANDBOX_ID")
+#PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_SANDBOX_PW")
+#PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
+PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_ID")
+PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_PW")
+PAYPAL_API_URL = f"https://api-m.paypal.com"
+
 paypal_id=f"https://www.paypal.com/sdk/js?client-id={PAYPAL_BUSINESS_CLIENT_ID}&currency=EUR"
 tmp_captured = 'captured.tmp'
 
@@ -51,7 +55,12 @@ def success():
     captured_payment = pkl.load(open(tmp_captured, 'rb'))
     mail_to = captured_payment["payment_source"]["paypal"]["email_address"]
     video_code = captured_payment["code_video"]
-    mail.sendmail(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
+    
+    try:
+        mail.sendmail(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
+    except:
+        print("There was an error sending your confirmation mail")
+
     os.remove(tmp_captured)
     return render_template('payment/success.html', code=video_code)
 

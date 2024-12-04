@@ -32,7 +32,7 @@ def capture_payment(order_id):  # Checks and confirms payment
     if is_approved_payment(captured_payment):
         code_bought = codes.draw_random_sell_code()
         captured_payment['code_video'] = code_bought
-        codes.remove_code_from_list(code_bought)
+        #codes.remove_code_from_list(code_bought)
         pkl.dump(captured_payment, open(tmp_captured, 'wb'))
         return jsonify(captured_payment)
     else:

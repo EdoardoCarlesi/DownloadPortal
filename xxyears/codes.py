@@ -16,7 +16,7 @@ def draw_random_sell_code():
     
     co, cs = get_codes()
     n_cs = random.randint(0, len(cs))
-
+    print(n_cs, len(cs), cs[n_cs])
     return cs[n_cs]
 
 
@@ -35,7 +35,7 @@ def draw_random_code():
 def is_code_valid(code):
     
     codes_valid = pkl.load(open(CODES_FILE_VALID, 'rb'))
-    
+    print(len(codes_valid))
     if code in codes_valid:
         return True
     else:
@@ -64,6 +64,7 @@ def remove_code_from_list(code):
         pkl.dump(cs, open(CODES_FILE_SELL, 'wb'))
         print('Done')
 
+    """
     elif code in co:
         print(len(co), ' len first')
         icd = np.where(np.array(co) == code)[0][0]
@@ -72,9 +73,11 @@ def remove_code_from_list(code):
         print('Updating codes file...')
         pkl.dump(co, open(CODES_FILE_ORIGINAL, 'wb'))
         print('Done')
+    """
 
 if __name__ == '__main__':
 
-    this_code = draw_random_code()
+    this_code = draw_random_sell_code()
+    print(this_code)
     print(is_code_valid(this_code))
-    remove_code_from_list(this_code)
+    #remove_code_from_list(this_code)

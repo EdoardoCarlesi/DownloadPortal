@@ -64,12 +64,13 @@ def rename_file_on_ftp(server, username, password, current_filename, new_filenam
 
         # Close the connection
         ftp.quit()
-        return f"Successfully renamed '{current_filename}' to '{new_filename}'"
+        return True
 
     except Exception as e:
         message = f"Error: {e}"
         logger.error(message) 
-        return message 
+        print(message)
+        return False 
 
 
 def generate_random_string(length=10):
@@ -122,10 +123,11 @@ def change_fname(file_path='json/video_filename.json', new_file_root='discoMetal
     rand_str = generate_random_string()
     new = f'{new_file_root}_{rand_str}.mp4'
     directory = '/www.nanowar.it/XX_YEARS_OF_STEEL/FULL_VIDEO/'
-    rename_file_on_ftp(server, username, password, current, new, directory)
+    renamed = rename_file_on_ftp(server, username, password, current, new, directory)
 
-    filename['filename'] = new
-    dump_to_json(filename, file_path)
+    if renamed:
+        filename['filename'] = new
+        dump_to_json(filename, file_path)
 
 
 def change_fnames(file_path='json/video_filenames.json', new_file_root='LiveAlcatraz_Part'):

@@ -8,9 +8,8 @@ import string
 import logging
 
 
-#TIME_RENAME = 240 #4 hours
-TIME_RENAME = 1
-
+#TIME_RENAME = 240 
+TIME_RENAME = 1 #short for testing
 
 
 def rename_file_on_ftp(server, username, password, current_filename, new_filename, directory="/"):
@@ -132,7 +131,7 @@ def change_fname(file_path='json/video_filename.json', new_file_root='discoMetal
 def change_fnames(file_path='json/video_filenames.json', new_file_root='LiveAlcatraz_Part'):
  
     rand_str = generate_random_string(8)
-    new_file_root = 'file_test'
+    new_file_root = 'LiveAlcatraz_Part'
     file_format = 'mp4'
 
     with open('json/.ftp_credentials.json') as file:

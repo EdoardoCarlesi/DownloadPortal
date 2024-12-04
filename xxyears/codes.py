@@ -60,7 +60,7 @@ def remove_code_from_list(code):
         del cs[icd]
         print(len(cs), ' len after')
         print('Updating codes file...')
-        #pkl.dump(codes, open(CODES_FILE_SELL, 'wb'))
+        pkl.dump(codes, open(CODES_FILE_SELL, 'wb'))
         print('Done')
 
     elif code in co:
@@ -69,7 +69,7 @@ def remove_code_from_list(code):
         del co[icd]
         print(len(co), ' len after')
         print('Updating codes file...')
-        #pkl.dump(codes, open(CODES_FILE_ORIGINAL, 'wb'))
+        pkl.dump(codes, open(CODES_FILE_ORIGINAL, 'wb'))
         print('Done')
 
 if __name__ == '__main__':

@@ -11,9 +11,11 @@ from email.mime.multipart import MIMEMultipart
 try:
     from xxyears.db import get_db
     import xxyears.codes as codes
+    import xxyears.mail as mail
 except:
     from db import get_db
     import codes
+    import mail
 
 import pickle as pkl
 import pandas as pd
@@ -39,7 +41,7 @@ def register():
             error = 'Code is required.'
 
         if not codes.is_code_valid(code):
-            error = 'Wrong code given.'
+            error = 'Wrong code given. Probably it is spelled wrong or it has already been used.'
         else:
             codes.remove_code_from_list(code)
 
@@ -56,6 +58,8 @@ def register():
                 error = f"Code {code} or email {email} is already registered. Try registering with a different code or email."
             else:
                 flash('Registration successful. You can now login.')
+                
+                mail.sendconfirmation(email, password, code)
                 return redirect(url_for("auth.login"))
 
         flash(error)

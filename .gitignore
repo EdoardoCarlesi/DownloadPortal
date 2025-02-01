@@ -16,3 +16,4 @@ build/
 *.log
 json/.*
 *.out
+xxyears/static/codes_used.csv

@@ -2,16 +2,17 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import xxyears.video as vid
 
-
-def sendconfirmation(to : str, password : str, code : str):
+def send_download_link(to : str, code : str):
 
     # Send email with album code
     smtp_server = 'smtp.xxyearsofsteel.com'
     smtp_port = 587
     smtp_username = os.environ.get('SMTP_USERNAME_INFO')
     smtp_password = os.environ.get('SMTP_PASSWORD')
-    site_url = 'www.xxyearsofsteel.com/login'
+
+    link_part1, link_part2, link_part3 = vid.return_video_urls()
 
     msg = MIMEMultipart()
     msg['From'] = 'info@xxyearsofsteel.com'
@@ -20,12 +21,11 @@ def sendconfirmation(to : str, password : str, code : str):
 
     message_text = f"""
  Thanks for registering on www.xxyearsofsteel.com with the code: {code} 
-
- Your mail is also your username, while your password is: {password} 
-
- You can then access the XX Years Of Steel video entering the (incredible) video section of the website, where 
- you will find some download links. The download links change regularly so make sure you download the videos as soon
- as you log in, and in case one of them does not work try to refresh the page or log out & log in again.
+ 
+ You can now download the three files into which the full show is divided:
+ <a href={link_part1}>PART 1</a>
+ <a href={link_part2}>PART 1</a>
+ <a href={link_part3}>PART 1</a>
 
  Enjoy the show! 
 
@@ -53,7 +53,7 @@ For the moment, I apologize in advance for any inconvenience - rest assured I wi
         server.send_message(msg)
 
 
-def sendmail(to : str, subject : str, code : str):
+def send_code(to : str, subject : str, code : str):
 
     # Send email with album code
     smtp_server = 'smtp.xxyearsofsteel.com'
@@ -67,16 +67,13 @@ def sendmail(to : str, subject : str, code : str):
     msg['To'] = to
     msg['Subject'] = subject
 
+
     message_text = f"""
  Thanks for your purchase!
 
- You can now register on: 
- {site_url} 
-
- using the code: 
+ Use the code: 
  {code} 
-
- You can now register on the XX Years Of Steel portal using this code.
+  on the <a href="https://www.xxyearsofsteel.com/login">XX Years of Steel website</a> to get a download link.
 
  That's moderately amazing! 
 
@@ -116,7 +113,7 @@ def send_report(mail_to='gatto@nanowar.it', subject='Video Stream Monthly Report
     msg['From'] = 'sales@xxyearsofsteel.com'
     msg['To'] = mail_to
     msg['Subject'] = subject
-    message_text = f'{header}\n '
+    message_text = f'Monthly Video Stream Report\n'
     msg.attach(MIMEText(message_text, 'plain')) 
     #f'Click the following link to reset your password: {reset_link}', 'plain'))
 

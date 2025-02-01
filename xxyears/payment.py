@@ -4,8 +4,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from requests.auth import HTTPBasicAuth
 import requests
 import os
-from . import codes
-from . import mail
+import xxyears.codes as codes
+import xxyears.mail as mail
 import pickle as pkl
 
 bp = Blueprint('payment', __name__, url_prefix='/payment')
@@ -30,7 +30,7 @@ def capture_payment(order_id):  # Checks and confirms payment
     captured_payment = paypal_capture_function(order_id)
     
     if is_approved_payment(captured_payment):
-        code_bought = codes.draw_random_sell_code()
+        code_bought = codes.codes.draw_random_sell_code()
         captured_payment['code_video'] = code_bought
         #codes.remove_code_from_list(code_bought)
         pkl.dump(captured_payment, open(tmp_captured, 'wb'))
@@ -57,7 +57,7 @@ def success():
     video_code = captured_payment["code_video"]
     
     try:
-        mail.sendmail(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
+        mail.send_code(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
     except:
         print("There was an error sending your confirmation mail")
 

@@ -2,6 +2,9 @@ import os
 import flask
 from flask import Flask
 
+from xxyears import video
+from xxyears import codes
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -39,10 +42,14 @@ def create_app(test_config=None):
     def index():
         return flask.render_template('video/index.html')
 
+    from . import codes
+    #app.register_blueprint(codes.bp)
+    #app.add_url_rule('/redeem', endpoint='redeem', methods=['GET', 'POST'])
+    app.add_url_rule('/', view_func=codes.redeem, methods=['GET', 'POST'])
+
     @app.route('/gdpr')
     def gdpr():
         return flask.render_template('gdpr.html')
-
 
     from . import db
     db.init_app(app)
@@ -57,6 +64,7 @@ def create_app(test_config=None):
     app.add_url_rule('/payment', endpoint='payment.payment')
     app.add_url_rule('/payment/success', endpoint='payment.success')
 
+    """
     from . import auth
     app.register_blueprint(auth.bp)
     app.add_url_rule('/auth', endpoint='auth.register')
@@ -64,5 +72,6 @@ def create_app(test_config=None):
     from . import video
     app.register_blueprint(video.bp)
     app.add_url_rule('/video', endpoint='video.play')
-    
+    """
+
     return app

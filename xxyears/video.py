@@ -1,14 +1,6 @@
 import json
 from ftplib import FTP
 
-from flask import (
-    Blueprint, render_template
-)
-
-from xxyears.auth import login_required
-
-bp = Blueprint('video', __name__, url_prefix='/video')
-
 
 def ftp_connect(credentials_file_path):
     """Establish an FTP connection using credentials from a JSON file."""
@@ -24,9 +16,8 @@ def ftp_connect(credentials_file_path):
     return ftp
 
 
-@bp.route('/play', methods=('GET', 'POST'))
-@login_required
-def play():
+def return_video_urls():
+
     credentials_file = 'json/.ftp_credentials.json'
     ftp = ftp_connect(credentials_file)
 
@@ -45,4 +36,10 @@ def play():
         for file in mp4_files:
             urls.append(http_path + file)
 
-    return render_template('video/videoplayer.html', url1=urls[0], url2=urls[1], url3=urls[2])
+    print(urls)
+    return tuple(urls)
+
+
+if __name__ == '__main__':
+
+    return_video_urls()

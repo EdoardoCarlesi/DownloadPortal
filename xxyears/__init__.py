@@ -64,14 +64,4 @@ def create_app(test_config=None):
     app.add_url_rule('/payment', endpoint='payment.payment')
     app.add_url_rule('/payment/success', endpoint='payment.success')
 
-    """
-    from . import auth
-    app.register_blueprint(auth.bp)
-    app.add_url_rule('/auth', endpoint='auth.register')
-
-    from . import video
-    app.register_blueprint(video.bp)
-    app.add_url_rule('/video', endpoint='video.play')
-    """
-
     return app

@@ -3,17 +3,17 @@ import csv
 import pandas as pd
 import random
 from datetime import datetime
-from flask import Flask, request, flash, render_template
+from flask import Flask, request, render_template
 from flask.sansio.blueprints import Blueprint
 from xxyears import mail
 
 CODES_FILE_ORIGINAL = 'xxyears/static/videocodes.pkl'
 CODES_FILE_SELL = 'xxyears/static/videocodes_sell.pkl'
-CODES_FILE_VALID = 'xxyears/static/valid_codes.pkl'
 CODES_USED = 'xxyears/static/codes_used.csv'
 
 bp = Blueprint('codes', __name__, url_prefix='/')
 app = Flask(__name__)
+
 
 def write_code_to_csv(email, code):
     """
@@ -90,8 +90,10 @@ def draw_random_sell_code():
 
 def is_code_valid(code):
     
-    codes_valid = pkl.load(open(CODES_FILE_VALID, 'rb'))
+    codes_sell = pkl.load(open(CODES_FILE_SELL, 'rb'))
+    codes_original = pkl.load(open(CODES_FILE_ORIGINAL, 'rb'))
     codes_used = get_used_codes()
+    codes_valid = codes_original + codes_sell
 
     if (code in codes_valid) and (not (code in codes_used)):
         return True
@@ -115,17 +117,7 @@ def convert_pkl_to_csv():
     """
     codes_original = pkl.load(open(CODES_FILE_ORIGINAL, 'rb'))
     codes_sell = pkl.load(open(CODES_FILE_SELL, 'rb'))
-    codes_valid = pkl.load(open(CODES_FILE_VALID, 'rb'))
 
     # Save each as a CSV file, assuming each code list is iterable
     pd.DataFrame({"codes": codes_original}).to_csv(CODES_FILE_ORIGINAL.replace('.pkl', '.csv'), index=False)
     pd.DataFrame({"codes": codes_sell}).to_csv(CODES_FILE_SELL.replace('.pkl', '.csv'), index=False)
-    pd.DataFrame({"codes": codes_valid}).to_csv(CODES_FILE_VALID.replace('.pkl', '.csv'), index=False)
-
-if __name__ == '__main__':
-
-    this_code = 'houdini-requiem-ironmonger-6544'
-    draw_random_sell_code()
-
-    # Convert .pkl files to .csv
-    convert_pkl_to_csv()

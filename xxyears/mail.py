@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import xxyears.video as vid
 
+
 def send_download_link(to : str, code : str):
 
     # Send email with album code
@@ -18,34 +19,48 @@ def send_download_link(to : str, code : str):
     msg['From'] = 'info@xxyearsofsteel.com'
     msg['To'] = to
     msg['Subject'] = "XX Years Of Steel - Video Portal Registration Successful!"
-
     message_text = f"""
- Thanks for registering on www.xxyearsofsteel.com with the code: {code} 
- 
- You can now download the three files into which the full show is divided:
+ <br>
+ Thanks for redeeming the code: {code} 
+ <br>
+ You can now download (or stream) the files of the XX Years Of Steel show:
+ <br>
+ <br>
  <a href={link_part1}>PART 1</a>
- <a href={link_part2}>PART 1</a>
- <a href={link_part3}>PART 1</a>
-
+ <br>
+ <a href={link_part2}>PART 2</a>
+ <br>
+ <a href={link_part3}>PART 3</a>
+ <br>
+ <br>
  Enjoy the show! 
-
-                    - Yours truly, Nanowar Of Steel
-
-DISCLAIMER:
-
+ <br>
+ <br>
+Yours truly, Nanowar Of Steel
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
+<b>DISCLAIMER:</b>
+ <br>
 This portal was completely developed by me (Gatto Panceri 666), so please bear with all the ugly graphics and bugs.
+ <br>
 I will spare you all the details about how painful and costly was to record and edit this video and audio, which is the
 reason why we relied on a "in house"-developed platform of this kind was mainly to avoid all the high fees 
 that other services require. 
-I also wanted to start developing something which in the future might be helpful to distribute some 
-other exclusive Nanowar Of Steel content as well.
-
+ <br>
+ I will also spare you the details on my original project, which was too much to handle in the end, so that I ended up with this easy 
+ "get a download link" portal.
+ <br>
 For the moment, I apologize in advance for any inconvenience - rest assured I will be there and try to help in case any problem should emerge!
-
-                - Gatto
+ <br>
+ <br>
+ <br>
+Gatto
     """
 
-    msg.attach(MIMEText(message_text, 'plain')) 
+    msg.attach(MIMEText(message_text, 'html'))
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
@@ -66,34 +81,20 @@ def send_code(to : str, subject : str, code : str):
     msg['From'] = 'info@xxyearsofsteel.com'
     msg['To'] = to
     msg['Subject'] = subject
-
-
     message_text = f"""
- Thanks for your purchase!
-
- Use the code: 
- {code} 
-  on the <a href="https://www.xxyearsofsteel.com/login">XX Years of Steel website</a> to get a download link.
-
- That's moderately amazing! 
-
-                    - Yours truly, Nanowar Of Steel
-
-DISCLAIMER:
-
-This portal was completely developed by me (Gatto Panceri 666), so please bear with all the ugly graphics and bugs.
-I will spare you all the details about how painful and costly was to record and edit this video and audio, which is the
-reason why we relied on a "in house"-developed platform of this kind was mainly to avoid all the high fees 
-that other services require. 
-I also wanted to start developing something which in the future might be helpful to distribute some 
-other exclusive Nanowar Of Steel content as well.
-
-For the moment, I apologize in advance for any inconvenience - rest assured I will be there and try to help in case any problem should emerge!
-
-                - Gatto
+ Thank you mildly for your purchase!
+ <br>
+ Use the code: {code} on the <a href="https://www.xxyearsofsteel.com/login">XX Years of Steel website</a> 
+ to get a download link for the video files of the XX Years Of Steel show.
+<br>
+Enjoy!
+<br>
+<br>
+<br>
+Yours truly, Nanowar Of Steel
     """
 
-    msg.attach(MIMEText(message_text, 'plain')) 
+    msg.attach(MIMEText(message_text, 'html'))
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
@@ -124,5 +125,5 @@ def send_report(mail_to='gatto@nanowar.it', subject='Video Stream Monthly Report
 
 
 if __name__ == '__main__':
-    sendmail(to='gatto@nanowar.it', subject='XX Years Code', code='dummy-test-666')
+    send_download_link(to='gatto@nanowar.it', code='dummy-test-666')
 

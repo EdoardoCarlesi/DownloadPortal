@@ -9,6 +9,7 @@ Werkzeug
 paypal
 gunicorn
 requests
+waitress
 mysql-connector-python
 python-secrets
 pyOpenSSL

@@ -43,8 +43,6 @@ def create_app(test_config=None):
         return flask.render_template('video/index.html')
 
     from . import codes
-    #app.register_blueprint(codes.bp)
-    #app.add_url_rule('/redeem', endpoint='redeem', methods=['GET', 'POST'])
     app.add_url_rule('/', view_func=codes.redeem, methods=['GET', 'POST'])
 
     @app.route('/gdpr')
@@ -55,7 +53,7 @@ def create_app(test_config=None):
     db.init_app(app)
     print('App intialized')
 
-    from . import report
+    from tools import report
     report.init_report_command(app)
     print('Report generated successfully')
 

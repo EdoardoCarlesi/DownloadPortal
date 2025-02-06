@@ -1,6 +1,4 @@
-import functools
-from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
-from werkzeug.security import check_password_hash, generate_password_hash
+from flask import (Blueprint, flash, redirect, render_template, url_for, jsonify)
 from requests.auth import HTTPBasicAuth
 import requests
 import os
@@ -15,7 +13,7 @@ bp = Blueprint('payment', __name__, url_prefix='/payment')
 #PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
 PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_ID")
 PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_PW")
-PAYPAL_API_URL = f"https://api-m.paypal.com"
+PAYPAL_API_URL = "https://api-m.{env}.paypal.com".format(env="paypal")
 
 paypal_id=f"https://www.paypal.com/sdk/js?client-id={PAYPAL_BUSINESS_CLIENT_ID}&currency=EUR"
 tmp_captured = 'captured.tmp'
@@ -51,27 +49,33 @@ def paypal_capture_function(order_id):
     
 @bp.route('/success') 
 def success():
-    captured_payment = pkl.load(open(tmp_captured, 'rb'))
-    mail_to = captured_payment["payment_source"]["paypal"]["email_address"]
-    video_code = captured_payment["code_video"]
-    
     try:
-        mail.send_code(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
-    except:
-        print("There was an error sending your confirmation mail")
-
-    os.remove(tmp_captured)
-    return render_template('payment/success.html', code=video_code)
+        with open(tmp_captured, 'rb') as temp_file:
+            captured_payment = pkl.load(temp_file)
+    
+        mail_to = captured_payment["payment_source"]["paypal"]["email_address"]
+        video_code = captured_payment["code_video"]
+    
+        try:
+            mail.send_code(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
+        except Exception as e:
+            print(f"There was an error sending your confirmation mail: {e}")
+    
+        os.remove(tmp_captured)
+        return render_template('payment/success.html', code=video_code)
+    except FileNotFoundError:
+        print("Temporary capture file not found.")
+        return redirect(url_for("payment.payment"))
 
 def is_approved_payment(captured_payment):
     status = captured_payment.get("status")
-    email = captured_payment["payment_source"]["paypal"]["email_address"]
-    amount = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get("value")
-    currency_code = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get(
-        "currency_code")
- 
-    if status == "COMPLETED":
-        return True
-    else:
-        return False
+    payment_source = captured_payment["payment_source"]["paypal"]
+    payment_unit = captured_payment.get("purchase_units", [{}])[0]
+    capture_details = payment_unit.get("payments", {}).get("captures", [{}])[0]
+    
+    email = payment_source.get("email_address")
+    amount = capture_details.get("amount", {}).get("value")
+    currency_code = capture_details.get("amount", {}).get("currency_code")
+    
+    return status == "COMPLETED"
 

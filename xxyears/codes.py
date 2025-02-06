@@ -32,6 +32,7 @@ def write_code_to_csv(email, code):
     except Exception as e:
         print(f'Failed to write to {CODES_USED}: {e}')
 
+
 @bp.route('/', methods=['GET', 'POST'])
 def redeem():
 
@@ -56,11 +57,13 @@ def redeem():
         else:
             return render_template('video/error.html', error=error, code=code)
 
+
 def get_codes():
 
     codes_original = pkl.load(open(CODES_FILE_ORIGINAL, 'rb'))
     codes_sell = pkl.load(open(CODES_FILE_SELL, 'rb'))
     return codes_original, codes_sell
+
 
 def get_used_codes():
     """

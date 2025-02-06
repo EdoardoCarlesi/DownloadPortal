@@ -10,13 +10,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/xxyears/static/codes_used.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
       </map>
     </option>
   </component>

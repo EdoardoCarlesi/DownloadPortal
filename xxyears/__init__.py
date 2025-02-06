@@ -7,14 +7,14 @@ from xxyears import codes
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    DATABASE = os.path.join(app.instance_path, 'xxyears.db')
     
+    """
+    DATABASE = os.path.join(app.instance_path, 'xxyears.db')
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=DATABASE,
     )
-
-    print("App db: ", DATABASE)
+    #print("App db: ", DATABASE)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -31,6 +31,7 @@ def create_app(test_config=None):
             print(f'Instance path already exists: {app.instance_path}')
     except OSError:
         print(f'Instance path does not exist: {app.instance_path}')
+    """
 
     # a simple page that says hello
     @app.route('/liechtenstein')

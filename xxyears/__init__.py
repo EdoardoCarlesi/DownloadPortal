@@ -1,7 +1,6 @@
 import os
 import flask
 from flask import Flask
-
 from xxyears import video
 from xxyears import codes
 
@@ -52,10 +51,6 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
     print('App intialized')
-
-    from tools import report
-    report.init_report_command(app)
-    print('Report generated successfully')
 
     from . import payment
     app.register_blueprint(payment.bp)

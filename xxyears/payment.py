@@ -1,7 +1,7 @@
 from flask import (Blueprint, flash, redirect, render_template, url_for, jsonify)
 from requests.auth import HTTPBasicAuth
 import requests
-import os
+import os, json
 import xxyears.codes as codes
 import xxyears.mail as mail
 import pickle as pkl
@@ -11,8 +11,21 @@ bp = Blueprint('payment', __name__, url_prefix='/payment')
 #PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_SANDBOX_ID")
 #PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_SANDBOX_PW")
 #PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
+
+credentials_file = 'json/.paypal_credentials.json'
 PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_ID")
 PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_PW")
+
+if not PAYPAL_BUSINESS_CLIENT_ID or not PAYPAL_BUSINESS_SECRET:
+    try:
+        with open(credentials_file, 'r') as file:
+            credentials = json.load(file)
+            PAYPAL_BUSINESS_CLIENT_ID = credentials.get("PAYPAL_ID")
+            PAYPAL_BUSINESS_SECRET = credentials.get("PAYPAL_PW")
+    except (FileNotFoundError, json.JSONDecodeError):
+        raise RuntimeError(
+            f"Missing PayPal credentials! Ensure either environment variables are set or '{credentials_file}' exists.")
+
 PAYPAL_API_URL = "https://api-m.{env}.paypal.com".format(env="paypal")
 
 paypal_id=f"https://www.paypal.com/sdk/js?client-id={PAYPAL_BUSINESS_CLIENT_ID}&currency=EUR"

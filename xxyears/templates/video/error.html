@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+ <h1>{% block title %}Error redeeming the code{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<br>
+There was an error redeeming the code {{ code }}.<br>
+    Error: {{ error }}.<br>
+    Please try again.
+    <br>
+    <br>
+    <br>
+
+{% endblock %}

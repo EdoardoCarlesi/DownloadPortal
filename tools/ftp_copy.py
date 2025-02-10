@@ -39,8 +39,6 @@ def rename_file_on_ftp(server, username, password, current_filename, new_filenam
     logger.addHandler(file_handler)
 
     # Example usage
-
-
     try:
         # Connect to the FTP server
         ftp = FTP(server)
@@ -107,8 +105,6 @@ def dump_to_json(variable, file_path):
 
 
 def change_fname(file_path='json/video_filename.json', new_file_root='discoMetal'):
- 
-    rand_str = generate_random_string(8)
 
     with open('json/.ftp_credentials.json') as file:
         credentials = json.load(file)
@@ -120,7 +116,7 @@ def change_fname(file_path='json/video_filename.json', new_file_root='discoMetal
     username = credentials['username']   
     server = credentials['server']   
     current = filename['filename']
-    rand_str = generate_random_string()
+    rand_str = generate_random_string(8)
     new = f'{new_file_root}_{rand_str}.mp4'
     directory = '/www.nanowar.it/XX_YEARS_OF_STEEL/FULL_VIDEO/'
     renamed = rename_file_on_ftp(server, username, password, current, new, directory)
@@ -141,8 +137,6 @@ def change_fnames(file_path='json/video_filenames.json', new_file_root='LiveAlca
     
     with open(file_path) as file:
         filename = json.load(file)
-    
-    ftp.cwd(ftp_path)
                 
     password = credentials['password']   
     username = credentials['username']   

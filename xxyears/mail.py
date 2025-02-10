@@ -2,50 +2,65 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import xxyears.video as vid
 
 
-def sendconfirmation(to : str, password : str, code : str):
+def send_download_link(to : str, code : str):
 
     # Send email with album code
     smtp_server = 'smtp.xxyearsofsteel.com'
     smtp_port = 587
     smtp_username = os.environ.get('SMTP_USERNAME_INFO')
     smtp_password = os.environ.get('SMTP_PASSWORD')
-    site_url = 'www.xxyearsofsteel.com/login'
+
+    link_part1, link_part2, link_part3 = vid.return_video_urls()
 
     msg = MIMEMultipart()
     msg['From'] = 'info@xxyearsofsteel.com'
     msg['To'] = to
     msg['Subject'] = "XX Years Of Steel - Video Portal Registration Successful!"
-
     message_text = f"""
- Thanks for registering on www.xxyearsofsteel.com with the code: {code} 
-
- Your mail is also your username, while your password is: {password} 
-
- You can then access the XX Years Of Steel video entering the (incredible) video section of the website, where 
- you will find some download links. The download links change regularly so make sure you download the videos as soon
- as you log in, and in case one of them does not work try to refresh the page or log out & log in again.
-
+ <br>
+ Thanks for redeeming the code: {code} 
+ <br>
+ You can now download (or stream) the files of the XX Years Of Steel show:
+ <br>
+ <br>
+ <a href={link_part1}>PART 1</a>
+ <br>
+ <a href={link_part2}>PART 2</a>
+ <br>
+ <a href={link_part3}>PART 3</a>
+ <br>
+ <br>
  Enjoy the show! 
-
-                    - Yours truly, Nanowar Of Steel
-
-DISCLAIMER:
-
+ <br>
+ <br>
+Yours truly, Nanowar Of Steel
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
+<b>DISCLAIMER:</b>
+ <br>
 This portal was completely developed by me (Gatto Panceri 666), so please bear with all the ugly graphics and bugs.
+ <br>
 I will spare you all the details about how painful and costly was to record and edit this video and audio, which is the
 reason why we relied on a "in house"-developed platform of this kind was mainly to avoid all the high fees 
 that other services require. 
-I also wanted to start developing something which in the future might be helpful to distribute some 
-other exclusive Nanowar Of Steel content as well.
-
+ <br>
+ I will also spare you the details on my original project, which was too much to handle in the end, so that I ended up with this easy 
+ "get a download link" portal.
+ <br>
 For the moment, I apologize in advance for any inconvenience - rest assured I will be there and try to help in case any problem should emerge!
-
-                - Gatto
+ <br>
+ <br>
+ <br>
+Gatto
     """
 
-    msg.attach(MIMEText(message_text, 'plain')) 
+    msg.attach(MIMEText(message_text, 'html'))
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
@@ -53,7 +68,7 @@ For the moment, I apologize in advance for any inconvenience - rest assured I wi
         server.send_message(msg)
 
 
-def sendmail(to : str, subject : str, code : str):
+def send_code(to : str, subject : str, code : str):
 
     # Send email with album code
     smtp_server = 'smtp.xxyearsofsteel.com'
@@ -66,37 +81,20 @@ def sendmail(to : str, subject : str, code : str):
     msg['From'] = 'info@xxyearsofsteel.com'
     msg['To'] = to
     msg['Subject'] = subject
-
     message_text = f"""
- Thanks for your purchase!
-
- You can now register on: 
- {site_url} 
-
- using the code: 
- {code} 
-
- You can now register on the XX Years Of Steel portal using this code.
-
- That's moderately amazing! 
-
-                    - Yours truly, Nanowar Of Steel
-
-DISCLAIMER:
-
-This portal was completely developed by me (Gatto Panceri 666), so please bear with all the ugly graphics and bugs.
-I will spare you all the details about how painful and costly was to record and edit this video and audio, which is the
-reason why we relied on a "in house"-developed platform of this kind was mainly to avoid all the high fees 
-that other services require. 
-I also wanted to start developing something which in the future might be helpful to distribute some 
-other exclusive Nanowar Of Steel content as well.
-
-For the moment, I apologize in advance for any inconvenience - rest assured I will be there and try to help in case any problem should emerge!
-
-                - Gatto
+ Thank you mildly for your purchase!
+ <br>
+ Use the code: {code} on the <a href="https://www.xxyearsofsteel.com/login">XX Years of Steel website</a> 
+ to get a download link for the video files of the XX Years Of Steel show.
+<br>
+Enjoy!
+<br>
+<br>
+<br>
+Yours truly, Nanowar Of Steel
     """
 
-    msg.attach(MIMEText(message_text, 'plain')) 
+    msg.attach(MIMEText(message_text, 'html'))
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
@@ -116,7 +114,7 @@ def send_report(mail_to='gatto@nanowar.it', subject='Video Stream Monthly Report
     msg['From'] = 'sales@xxyearsofsteel.com'
     msg['To'] = mail_to
     msg['Subject'] = subject
-    message_text = f'{header}\n '
+    message_text = f'Monthly Video Stream Report\n'
     msg.attach(MIMEText(message_text, 'plain')) 
     #f'Click the following link to reset your password: {reset_link}', 'plain'))
 
@@ -127,5 +125,5 @@ def send_report(mail_to='gatto@nanowar.it', subject='Video Stream Monthly Report
 
 
 if __name__ == '__main__':
-    sendmail(to='gatto@nanowar.it', subject='XX Years Code', code='dummy-test-666')
+    send_download_link(to='gatto@nanowar.it', code='dummy-test-666')
 

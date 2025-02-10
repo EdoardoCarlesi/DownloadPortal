@@ -15,6 +15,3 @@ supervisorctl stop xxyears_gunicorn
 less /var/log/xxyears/
 
 less /etc/supervisor/config.d/xxyears.conf
-
-
-cvlc live_buelach.mp4 --sout '#http{mux=ts,dst=:8080}' --sout-all --sout-keep

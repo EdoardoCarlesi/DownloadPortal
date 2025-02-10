@@ -1,0 +1,19 @@
+$ sudo apt-get install software-properties-common
+$ sudo add-apt-repository ppa:certbot/certbot
+$ sudo apt-get update
+$ sudo apt-get install certbot
+
+$ sudo certbot certonly --webroot -w /var/www/xxyears -d xxyearsofsteel.com
+
+server {
+    listen 80;
+    server_name xxyearsofsteel.com;
+    location ~ /.well-known {
+        root /path/to/letsencrypt/verification/directory;
+    }
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+sudo certbot renew

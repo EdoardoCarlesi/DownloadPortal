@@ -15,18 +15,17 @@ bp = Blueprint('payment', __name__, url_prefix='/payment')
 credentials_file = 'json/.paypal_credentials.json'
 PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_ID")
 PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_PW")
+PAYPAL_API_URL = "https://api-m.paypal.com"
 
 if not PAYPAL_BUSINESS_CLIENT_ID or not PAYPAL_BUSINESS_SECRET:
     try:
         with open(credentials_file, 'r') as file:
             credentials = json.load(file)
-            PAYPAL_BUSINESS_CLIENT_ID = credentials.get("PAYPAL_ID")
-            PAYPAL_BUSINESS_SECRET = credentials.get("PAYPAL_PW")
+            PAYPAL_BUSINESS_CLIENT_ID = credentials.get("PAYPAL_ID", "").strip()
+            PAYPAL_BUSINESS_SECRET = credentials.get("PAYPAL_PW", "").strip()
     except (FileNotFoundError, json.JSONDecodeError):
         raise RuntimeError(
-            f"Missing PayPal credentials! Ensure either environment variables are set or '{credentials_file}' exists.")
-
-PAYPAL_API_URL = "https://api-m.{env}.paypal.com".format(env="paypal")
+            f"Missing or invalid PayPal credentials! Ensure either environment variables are properly set or '{credentials_file}' contains valid data.")
 
 paypal_id=f"https://www.paypal.com/sdk/js?client-id={PAYPAL_BUSINESS_CLIENT_ID}&currency=EUR"
 tmp_captured = 'captured.tmp'
@@ -55,18 +54,25 @@ def paypal_capture_function(order_id):
     headers = {
         "Content-Type": "application/json",
     }
-    response = requests.post(url=paypal_capture_url, headers=headers, auth=basic_auth)
-    response.raise_for_status()
-    json_data = response.json()
-    return json_data
-    
+    try:
+        response = requests.post(url=paypal_capture_url, headers=headers, auth=basic_auth)
+        response.raise_for_status()
+        json_data = response.json()
+        return json_data
+    except requests.RequestException as e:
+        print(f"Error during PayPal capture request: {e}")
+        return {}
+
 @bp.route('/success') 
 def success():
     try:
         with open(tmp_captured, 'rb') as temp_file:
             captured_payment = pkl.load(temp_file)
-    
-        mail_to = captured_payment["payment_source"]["paypal"]["email_address"]
+
+        mail_to = captured_payment.get("payment_source", {}).get("paypal", {}).get("email_address", None)
+        if not mail_to:
+            print("Error: Missing email address in payment source.")
+            return redirect(url_for("payment.payment"))
         video_code = captured_payment["code_video"]
     
         try:
@@ -80,9 +86,10 @@ def success():
         print("Temporary capture file not found.")
         return redirect(url_for("payment.payment"))
 
+
 def is_approved_payment(captured_payment):
     status = captured_payment.get("status")
-    payment_source = captured_payment["payment_source"]["paypal"]
+    payment_source = captured_payment.get("payment_source", {}).get("paypal", {})
     payment_unit = captured_payment.get("purchase_units", [{}])[0]
     capture_details = payment_unit.get("payments", {}).get("captures", [{}])[0]
     

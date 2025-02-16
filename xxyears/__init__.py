@@ -1,8 +1,9 @@
 import os
 import flask
-from flask import Flask
+from flask import Flask, flash
 from xxyears import video
 from xxyears import codes
+from xxyears import mail
 
 def create_app(test_config=None):
     # create and configure the app
@@ -48,6 +49,12 @@ def create_app(test_config=None):
     @app.route('/gdpr')
     def gdpr():
         return flask.render_template('gdpr.html')
+
+    @app.route('/send-report')
+    def send_report():
+        mail.send_codes_report()
+        #flash('Report sent successfully')
+        return 'Report sent successfully'
 
     from . import db
     db.init_app(app)

@@ -3,8 +3,136 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import xxyears.video as vid
+import pandas as pd
+from datetime import datetime, timedelta
 
 
+def create_backup(file_path='static/codes_used.csv'):
+    """
+    Creates a backup of the specified CSV file with a .bkp extension.
+
+    :param file_path: Path to the original CSV file
+    """
+    try:
+        backup_path = f"{file_path}.bkp"
+        with open(file_path, 'r') as original_file:
+            with open(backup_path, 'w') as backup_file:
+                backup_file.write(original_file.read())
+        print(f"Backup created successfully: {backup_path}")
+    except Exception as e:
+        print(f"Error creating backup: {e}")
+
+
+def generate_codes_report(csv_path='static/codes_used.csv'):
+    """
+    Generate a comprehensive report of codes from the CSV file.
+
+    :param csv_path: Path to the CSV file containing code information
+    :return: Dictionary with code statistics
+    """
+    try:
+        # Read the CSV file
+
+        try:
+            custom_header = ['mail', 'code', 'sale_date', 'status']
+            df = pd.read_csv(csv_path, header=None, names=custom_header)
+            print("CSV content read successfully: \n", df.head())
+        except Exception as e:
+            raise RuntimeError(f"Failed to read the CSV file at {csv_path}: {e}")
+
+        # Current date and last week's date
+        today = datetime.now().date()
+        last_week = today - timedelta(days=7)
+
+        # Total codes
+        total_codes = len(df)
+        print("Total codes:", total_codes)
+
+        # Redeemed codes
+        redeemed_codes = df[df['status'] == 'REDEEMED']
+        total_redeemed = len(redeemed_codes)
+        print("Redeemed codes data:\n", redeemed_codes)
+        print("Total redeemed codes:", total_redeemed)
+
+        # Sold codes
+        sold_codes = df[df['status'] == 'SOLD']
+        total_sold = len(sold_codes)
+        print("Sold codes data:\n", sold_codes)
+        print("Total sold codes:", total_sold)
+
+        # Codes sold last week
+        last_week_sold = sold_codes[pd.to_datetime(sold_codes['sale_date']).dt.date.between(last_week, today)]
+        total_last_week_sold = len(last_week_sold)
+        print("Codes sold last week data:\n", last_week_sold)
+        print("Total codes sold last week:", total_last_week_sold)
+
+        # Codes sold today
+        today_sold = sold_codes[pd.to_datetime(sold_codes['sale_date']).dt.date == today]
+        total_today_sold = len(today_sold)
+        print("Codes sold today data:\n", today_sold)
+        print("Total codes sold today:", total_today_sold)
+
+        print(today_sold, total_today_sold, total_redeemed)
+        # Compile report
+        report = f"""
+Video Codes Report - {today}
+----------------------------
+
+Total Codes: {total_codes}
+Total Redeemed Codes: {total_redeemed}
+Total Sold Codes: {total_sold}
+
+Codes Sold Last Week: {total_last_week_sold}
+Codes Sold Today: {total_today_sold}
+
+Detailed Breakdown:
+- Redeemed Codes: {total_redeemed}
+- Available Codes: {total_codes - total_redeemed - total_sold}
+"""
+        print(report)
+        return report
+
+    except Exception as e:
+        return f"Error generating report: {str(e)}"
+
+
+def send_codes_report(mail_to='gatto@nanowar.it',
+                      subject='XX Years of Steel - Codes Report',
+                      csv_path='xxyears/static/codes_used.csv'):
+    """
+    Generate and send codes report via email.
+
+    :param mail_to: Recipient email address
+    :param subject: Email subject
+    :param csv_path: Path to the CSV file
+    """
+    # Generate report
+    report = generate_codes_report(csv_path)
+    print(report)
+    # Send email with report (using existing email infrastructure)
+    smtp_server = 'smtp.xxyearsofsteel.com'
+    smtp_port = 587
+    smtp_username = os.environ.get('SMTP_USERNAME_INFO')
+    smtp_password = os.environ.get('SMTP_PASSWORD')
+
+    print('SMTP: ', smtp_username, smtp_password)
+
+    msg = MIMEMultipart()
+    msg['From'] = 'info@xxyearsofsteel.com'
+    msg['To'] = mail_to
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(report, 'plain'))
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(msg)
+
+
+# Example usage
+if __name__ == '__main__':
+    send_codes_report()
 def send_download_link(to : str, code : str):
 
     # Send email with album code

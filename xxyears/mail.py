@@ -72,9 +72,6 @@ def generate_codes_report(csv_path='static/codes_used.csv'):
         print("Codes sold today data:\n", today_sold)
         print("Total codes sold today:", total_today_sold)
 
-        print(today_sold, total_today_sold, total_redeemed)
-        link_part1, link_part2, link_part3 = vid.return_video_urls()
-        
         # Compile report
         report = f"""
 Video Codes Report - {today}
@@ -86,16 +83,7 @@ Total Sold Codes: {total_sold}
 
 Codes Sold Last Week: {total_last_week_sold}
 Codes Sold Today: {total_today_sold}
-
-Detailed Breakdown:
-- Redeemed Codes: {total_redeemed}
-
-Video Links:
-    {link_part1}
-    {link_part2}
-    {link_part3}
 """
-        print(report)
         return report
 
     except Exception as e:
@@ -115,13 +103,24 @@ def send_codes_report(mail_to='gatto@nanowar.it',
     # Generate report
     report = generate_codes_report(csv_path)
     print(report)
+
     # Send email with report (using existing email infrastructure)
     smtp_server = 'smtp.xxyearsofsteel.com'
     smtp_port = 587
-    smtp_username = os.environ.get('SMTP_USERNAME_INFO')
-    smtp_password = os.environ.get('SMTP_PASSWORD')
+    smtp_config_file = 'json/.smtp_credentials.json'
 
-    print('SMTP: ', smtp_username, smtp_password)
+    if smtp_config_file:
+        try:
+            import json
+            with open(smtp_config_file, 'r') as f:
+                smtp_config = json.load(f)
+            smtp_username = smtp_config.get('SMTP_USERNAME_INFO')
+            smtp_password = smtp_config.get('SMTP_PASSWORD')
+        except Exception as e:
+            raise RuntimeError(f"Failed to read SMTP configuration file: {e}")
+    else:
+        smtp_username = os.environ.get('SMTP_USERNAME_INFO')
+        smtp_password = os.environ.get('SMTP_PASSWORD')
 
     msg = MIMEMultipart()
     msg['From'] = 'info@xxyearsofsteel.com'
@@ -135,17 +134,25 @@ def send_codes_report(mail_to='gatto@nanowar.it',
         server.login(smtp_username, smtp_password)
         server.send_message(msg)
 
-
-# Example usage
-if __name__ == '__main__':
-    send_codes_report()
 def send_download_link(to : str, code : str):
 
     # Send email with album code
     smtp_server = 'smtp.xxyearsofsteel.com'
     smtp_port = 587
-    smtp_username = os.environ.get('SMTP_USERNAME_INFO')
-    smtp_password = os.environ.get('SMTP_PASSWORD')
+    smtp_config_file = 'json/.smtp_credentials.json'
+
+    if smtp_config_file:
+        try:
+            import json
+            with open(smtp_config_file, 'r') as f:
+                smtp_config = json.load(f)
+            smtp_username = smtp_config.get('SMTP_USERNAME_INFO')
+            smtp_password = smtp_config.get('SMTP_PASSWORD')
+        except Exception as e:
+            raise RuntimeError(f"Failed to read SMTP configuration file: {e}")
+    else:
+        smtp_username = os.environ.get('SMTP_USERNAME_INFO')
+        smtp_password = os.environ.get('SMTP_PASSWORD')
 
     link_part1, link_part2, link_part3 = vid.return_video_urls()
 
@@ -207,8 +214,20 @@ def send_code(to : str, subject : str, code : str):
     # Send email with album code
     smtp_server = 'smtp.xxyearsofsteel.com'
     smtp_port = 587
-    smtp_username = os.environ.get('SMTP_USERNAME_INFO')
-    smtp_password = os.environ.get('SMTP_PASSWORD')
+    smtp_config_file = 'json/.smtp_credentials.json'
+
+    if smtp_config_file:
+        try:
+            import json
+            with open(smtp_config_file, 'r') as f:
+                smtp_config = json.load(f)
+            smtp_username = smtp_config.get('SMTP_USERNAME_INFO')
+            smtp_password = smtp_config.get('SMTP_PASSWORD')
+        except Exception as e:
+            raise RuntimeError(f"Failed to read SMTP configuration file: {e}")
+    else:
+        smtp_username = os.environ.get('SMTP_USERNAME_INFO')
+        smtp_password = os.environ.get('SMTP_PASSWORD')
     site_url = 'www.xxyearsofsteel.com/login'
 
     msg = MIMEMultipart()
@@ -260,4 +279,3 @@ def send_report(mail_to='gatto@nanowar.it', subject='Video Stream Monthly Report
 
 if __name__ == '__main__':
     send_download_link(to='gatto@nanowar.it', code='dummy-test-666')
-

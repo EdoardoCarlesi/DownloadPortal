@@ -73,6 +73,8 @@ def generate_codes_report(csv_path='static/codes_used.csv'):
         print("Total codes sold today:", total_today_sold)
 
         print(today_sold, total_today_sold, total_redeemed)
+        link_part1, link_part2, link_part3 = vid.return_video_urls()
+        
         # Compile report
         report = f"""
 Video Codes Report - {today}
@@ -87,7 +89,11 @@ Codes Sold Today: {total_today_sold}
 
 Detailed Breakdown:
 - Redeemed Codes: {total_redeemed}
-- Available Codes: {total_codes - total_redeemed - total_sold}
+
+Video Links:
+    {link_part1}
+    {link_part2}
+    {link_part3}
 """
         print(report)
         return report

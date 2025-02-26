@@ -90,9 +90,9 @@ Codes Sold Today: {total_today_sold}
 
 Latest video links:
 ----------------------------
- link_part1
- link_part2
- link_part3
+ {link_part1}
+ {link_part2}
+ {link_part3}
 
 """
         return report

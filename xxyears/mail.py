@@ -90,13 +90,9 @@ Codes Sold Today: {total_today_sold}
 
 Latest video links:
 ----------------------------
- <br>
- <a href={link_part1}>PART 1</a>
- <br>
- <a href={link_part2}>PART 2</a>
- <br>
- <a href={link_part3}>PART 3</a>
- <br>
+ link_part1
+ link_part2
+ link_part3
 
 """
         return report

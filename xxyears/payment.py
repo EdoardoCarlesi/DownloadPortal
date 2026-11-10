@@ -1,10 +1,9 @@
-from flask import (Blueprint, flash, redirect, render_template, url_for, jsonify)
+from flask import (Blueprint, redirect, render_template, url_for, jsonify, session)
 from requests.auth import HTTPBasicAuth
 import requests
-import os, json
+import os, json, re
 import xxyears.codes as codes
 import xxyears.mail as mail
-import pickle as pkl
 
 bp = Blueprint('payment', __name__, url_prefix='/payment')
 
@@ -28,7 +27,11 @@ if not PAYPAL_BUSINESS_CLIENT_ID or not PAYPAL_BUSINESS_SECRET:
             f"Missing or invalid PayPal credentials! Ensure either environment variables are properly set or '{credentials_file}' contains valid data.")
 
 paypal_id=f"https://www.paypal.com/sdk/js?client-id={PAYPAL_BUSINESS_CLIENT_ID}&currency=EUR"
-tmp_captured = 'captured.tmp'
+
+# Must match the amount set in templates/payment/payment.html.
+EXPECTED_AMOUNT = '4.99'
+EXPECTED_CURRENCY = 'EUR'
+ORDER_ID_RE = re.compile(r'^[A-Za-z0-9]{1,64}$')
 
 @bp.route('/payment', methods=['POST'])
 def payment():
@@ -37,16 +40,28 @@ def payment():
 
 @bp.route("/<order_id>/capture", methods=["POST"])
 def capture_payment(order_id):  # Checks and confirms payment
+    if not ORDER_ID_RE.match(order_id):
+        return jsonify({'error': 'Invalid order id'}), 400
+
     captured_payment = paypal_capture_function(order_id)
-    
+
     if is_approved_payment(captured_payment):
-        code_bought = codes.draw_random_sell_code()
-        captured_payment['code_video'] = code_bought
-        pkl.dump(captured_payment, open(tmp_captured, 'wb'))
+        mail_to = captured_payment['payment_source']['paypal']['email_address']
+        code_bought = codes.reserve_sell_code(mail_to)
+        if not code_bought:
+            # The buyer has been charged; this needs a manual refund.
+            print(f"NO SELL CODES LEFT: order {order_id} from {mail_to} was paid but got no code.")
+            return jsonify({'error': 'No codes available'}), 500
+        try:
+            mail.send_code(to=mail_to, subject='XX Years of Steel Video Code', code=code_bought)
+        except Exception as e:
+            print(f"There was an error sending your confirmation mail: {e}")
+        # Kept in the buyer's own session only, never in a shared file or in the response.
+        session['purchase'] = {'code': code_bought}
         return jsonify(captured_payment)
     else:
-        flash("Payment not approved!")
-    
+        return jsonify({'error': 'Payment not approved'}), 400
+
 def paypal_capture_function(order_id):
     post_route = f"/v2/checkout/orders/{order_id}/capture"
     paypal_capture_url = PAYPAL_API_URL + post_route
@@ -55,7 +70,7 @@ def paypal_capture_function(order_id):
         "Content-Type": "application/json",
     }
     try:
-        response = requests.post(url=paypal_capture_url, headers=headers, auth=basic_auth)
+        response = requests.post(url=paypal_capture_url, headers=headers, auth=basic_auth, timeout=15)
         response.raise_for_status()
         json_data = response.json()
         return json_data
@@ -65,37 +80,24 @@ def paypal_capture_function(order_id):
 
 @bp.route('/success') 
 def success():
-    try:
-        with open(tmp_captured, 'rb') as temp_file:
-            captured_payment = pkl.load(temp_file)
-
-        mail_to = captured_payment.get("payment_source", {}).get("paypal", {}).get("email_address", None)
-        if not mail_to:
-            print("Error: Missing email address in payment source.")
-            return redirect(url_for("payment.payment"))
-        video_code = captured_payment["code_video"]
-    
-        try:
-            mail.send_code(to=mail_to, subject='XX Years of Steel Video Code', code=video_code)
-        except Exception as e:
-            print(f"There was an error sending your confirmation mail: {e}")
-    
-        os.remove(tmp_captured)
-        return render_template('payment/success.html', code=video_code)
-    except FileNotFoundError:
-        print("Temporary capture file not found.")
+    purchase = session.pop('purchase', None)
+    if not purchase:
         return redirect(url_for("payment.payment"))
+
+    return render_template('payment/success.html', code=purchase['code'])
 
 
 def is_approved_payment(captured_payment):
-    status = captured_payment.get("status")
-    payment_source = captured_payment.get("payment_source", {}).get("paypal", {})
-    payment_unit = captured_payment.get("purchase_units", [{}])[0]
-    capture_details = payment_unit.get("payments", {}).get("captures", [{}])[0]
-    
-    email = payment_source.get("email_address")
-    amount = capture_details.get("amount", {}).get("value")
-    currency_code = capture_details.get("amount", {}).get("currency_code")
-    
-    return status == "COMPLETED"
+    if not captured_payment or captured_payment.get("status") != "COMPLETED":
+        return False
+
+    try:
+        capture = captured_payment["purchase_units"][0]["payments"]["captures"][0]
+        amount = capture["amount"]
+        return (capture.get("status") == "COMPLETED"
+                and amount["value"] == EXPECTED_AMOUNT
+                and amount["currency_code"] == EXPECTED_CURRENCY
+                and bool(captured_payment["payment_source"]["paypal"]["email_address"]))
+    except (KeyError, IndexError, TypeError):
+        return False
 

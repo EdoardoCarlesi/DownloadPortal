@@ -49,7 +49,7 @@ def create_pdf_from_csv(csv_file, output_pdf):
 
 if __name__ == "__main__":
     # Specify the input CSV and output PDF paths
-    input_csv = "xxyears/static/codes_used.csv"
+    input_csv = "xxyears/data/codes_used.csv"
     output_pdf = "codes_used_report.pdf"
 
     # Generate the PDF report from the CSV file

@@ -16,4 +16,5 @@ build/
 *.log
 json/.*
 *.out
-xxyears/static/codes_used.csv
+xxyears/data/codes_used.csv
+xxyears/data/codes.lock

@@ -1,3 +1,4 @@
+import hmac
 import os
 import flask
 from flask import Flask, flash
@@ -8,6 +9,13 @@ from xxyears import mail
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    # Signs the session cookie that carries a buyer's code. Must be set in the environment
+    # and be identical across all gunicorn workers.
+    secret_key = os.environ.get('SECRET_KEY')
+    if not secret_key:
+        raise RuntimeError('SECRET_KEY environment variable must be set.')
+    app.config['SECRET_KEY'] = secret_key
     
     """
     DATABASE = os.path.join(app.instance_path, 'xxyears.db')
@@ -52,6 +60,11 @@ def create_app(test_config=None):
 
     @app.route('/send-report')
     def send_report():
+        # Disabled unless REPORT_TOKEN is set; caller must send it in the X-Report-Token header.
+        expected = os.environ.get('REPORT_TOKEN')
+        provided = flask.request.headers.get('X-Report-Token', '')
+        if not expected or not hmac.compare_digest(provided.encode(), expected.encode()):
+            flask.abort(404)
         mail.send_codes_report()
         #flash('Report sent successfully')
         return 'Report sent successfully'

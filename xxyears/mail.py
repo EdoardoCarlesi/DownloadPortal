@@ -7,7 +7,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 
-def create_backup(file_path='static/codes_used.csv'):
+def create_backup(file_path='xxyears/data/codes_used.csv'):
     """
     Creates a backup of the specified CSV file with a .bkp extension.
 
@@ -23,7 +23,7 @@ def create_backup(file_path='static/codes_used.csv'):
         print(f"Error creating backup: {e}")
 
 
-def generate_codes_report(csv_path='static/codes_used.csv'):
+def generate_codes_report(csv_path='xxyears/data/codes_used.csv'):
     """
     Generate a comprehensive report of codes from the CSV file.
 
@@ -104,7 +104,7 @@ Video Links:
 
 def send_codes_report(mail_to='gatto@nanowar.it',
                       subject='XX Years of Steel - Codes Report',
-                      csv_path='xxyears/static/codes_used.csv'):
+                      csv_path='xxyears/data/codes_used.csv'):
     """
     Generate and send codes report via email.
 
@@ -120,8 +120,6 @@ def send_codes_report(mail_to='gatto@nanowar.it',
     smtp_port = 587
     smtp_username = os.environ.get('SMTP_USERNAME_INFO')
     smtp_password = os.environ.get('SMTP_PASSWORD')
-
-    print('SMTP: ', smtp_username, smtp_password)
 
     msg = MIMEMultipart()
     msg['From'] = 'info@xxyearsofsteel.com'
